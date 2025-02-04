@@ -1,6 +1,5 @@
 from ultralytics import YOLO
 import cv2
-import math 
 from random import randrange
 import numpy as np
 
