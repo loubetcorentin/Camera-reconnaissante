@@ -9,7 +9,7 @@ En détournant les technologies de vidéosurveillance en une expérience tangibl
 
 # Installation et utilisation 
 
-Git clone et creation d'un environnement virtuel python:
+## Git clone et creation d'un environnement virtuel python:
 
 ```bash
 git clone https://github.com/loubetcorentin/Camera-reconnaissante.git
@@ -19,10 +19,20 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Telechargement du modèle yolov11n-face
+## Telechargement du modèle yolov11n-face
 
 ```bash
 mkdir yolo-Weights
 cd yolo-Weights
 wget https://github.com/akanametov/yolo-face/releases/download/v0.0.0/yolov11n-face.pt
+```
+
+## Installer ollama et llava
+
+Installer Ollama sur votre machine voir `https://ollama.com/`
+
+Une fois ollama installé, télécharger llava : 
+
+```bash
+ollama pull llava
 ```
