@@ -38,10 +38,8 @@ def webcam_stream():
     ref_time = time.time()
 
     while True:
-        print('1ooo')
         success, img = cap.read()
         img = img[:, 80:560]
-        print('2ooo')
         
         results = model(img, stream=True)
         
@@ -58,8 +56,8 @@ def webcam_stream():
 
                 if (x2-x1)*(y2-y1) > 10000 and box.cls[0] == 0:
                     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
-                    cv2.putText(img, f"competence:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-25], font, fontScale, color, thickness)
-                    cv2.putText(img, f"attractiveness:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-0], font, fontScale, color, thickness)
+                    # cv2.putText(img, f"competence:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-25], font, fontScale, color, thickness)
+                    # cv2.putText(img, f"attractiveness:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-0], font, fontScale, color, thickness)
 
         cv2.imshow('Webcam', img)
 

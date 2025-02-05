@@ -1,2 +1,4 @@
 .venv/*
 yolo-Weights/*
+img/*
+out/*
