@@ -2,3 +2,5 @@
 yolo-Weights/*
 img/*
 out/*
+__pycache__
+
