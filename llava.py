@@ -21,47 +21,44 @@ Be concise
 """
 
 
-def ollama_requests(prompt):
+def ollama_stream(prompt):
     try:
-        while True:
-            print("Start Ollama request")
-            with open(SCREENSHOT_CAM_FILE, "rb") as file:
-                response = ollama.chat(
-                    model="llava",
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": prompt,
-                            "images": [file.read()],
-                        },
-                    ],
-                )
-
-            content = response["message"]["content"]
-            print(f"Received Ollama result : {content}")
-            yield content
-            time.sleep(50)
+        print("Start Ollama request")
+        with open(SCREENSHOT_CAM_FILE, "rb") as file:
+            for part in ollama.chat(
+                model="llava",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompt,
+                        "images": [file.read()],
+                    },
+                ],
+                stream=True,
+            ):
+                yield part["message"]["content"]
+                print(part["message"]["content"], end="", flush=True)
+        print("Ollama stoped generating request")
     except KeyboardInterrupt:
         sys.exit()
 
 
 def template(content, printer):
     printer.text(content)
-    time.sleep(0.5)
-    printer.ser.ln()
-    printer.qr("https://technopolice.fr/", size=4, native=True)
-    printer.ser.barcode("4006381333931", "EAN13", 64, 2, "", "")
 
 
 if __name__ == "__main__":
     try:
         printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
-        for content in ollama_requests(LLAVA_PROMPT):
-            printer.empty_buffer()
-            printer.ser.image("./img/ami.jpg", center=True)
-            template(content, printer)
-            with open(OUTPUT_MSG_FILE, "w") as out_file:
+        printer.empty_buffer()
+        printer.ser.image("./img/ami.jpg", center=True)
+        with open(OUTPUT_MSG_FILE, "w") as out_file:
+            for content in ollama_stream(LLAVA_PROMPT):
+                printer.text(content)
                 out_file.write(content)
-            print(f"Saved Ollama result, see in {OUTPUT_MSG_FILE}")
+                time.sleep(0.1)
+        printer.ser.ln()
+        printer.qr("https://technopolice.fr/", size=4)
+        printer.ser.barcode("4006381333931", "EAN13", 64, 2, "", "")
     except KeyboardInterrupt:
         sys.exit()
