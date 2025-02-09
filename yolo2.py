@@ -1,23 +1,18 @@
 import sys
 from ultralytics import YOLO
 import cv2
-from random import randrange
 import numpy as np
-import ollama
-from threading import Thread
+from random import randrange
 import time
+import os
 from pathlib import Path
-from tty import Printer
+from dotenv import load_dotenv
 
-IMG_PATH = Path("img")
-SCREENSHOT_CAM_FILE = IMG_PATH / "screen_cam.jpg"
+load_dotenv()
+
+SCREENSHOT_CAM_FILE = os.getenv("SCREENSHOT_CAM_FILE")
 YOLO_WEIGHTS_PATH = Path("yolo-Weights")
 YOLO11N_FACE_FILE = YOLO_WEIGHTS_PATH / "yolov11n-face.pt"
-
-OUTPUT_MSG_FILE = Path("output_llava.txt")
-
-
-LLAVA_PROMPT = "Look at the person whose face is in the green square, imagine a reason why it could be a dangerous person."
 
 
 def webcam_stream():
@@ -30,7 +25,7 @@ def webcam_stream():
     model = YOLO(YOLO11N_FACE_FILE)
     model.verbose = False
 
-    font = cv2.FONT_HERSHEY_SIMPLEX
+    font = cv2.FONT_HERSHEY_COMPLEX_SMALL
     fontScale = 0.7
     color = (0, 255, 0)
     thickness = 2
@@ -57,7 +52,15 @@ def webcam_stream():
 
                 if (x2 - x1) * (y2 - y1) > 10000 and box.cls[0] == 0:
                     cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
-                    # cv2.putText(img, f"competence:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-25], font, fontScale, color, thickness)
+                    cv2.putText(
+                        img,
+                        f"competence:{randrange(20,30)*box.conf[0]:.2f}%",
+                        [x1 + 5, y1 - 25],
+                        font,
+                        fontScale,
+                        color,
+                        thickness,
+                    )
                     # cv2.putText(img, f"attractiveness:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-0], font, fontScale, color, thickness)
 
         cv2.imshow("Webcam", img)
@@ -75,41 +78,8 @@ def webcam_stream():
     cv2.destroyAllWindows()
 
 
-def ollama_requests():
-    printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
-    printer.set_print_density(7, 255, 2)
-    printer.set_margins(5, 5)
-    printer.set_size(Printer.DOUBLE_WIDTH)
-    while True:
-        print("Start Ollama request")
-        with open(SCREENSHOT_CAM_FILE, "rb") as file:
-            response = ollama.chat(
-                model="llava",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": LLAVA_PROMPT,
-                        "images": [file.read()],
-                    },
-                ],
-            )
-
-        content = response["message"]["content"]
-        print(f"Received Ollama result : {content}")
-        printer.write(str.encode(content))
-
-        with open(OUTPUT_MSG_FILE, "w") as out_file:
-            out_file.write(content)
-        print(f"Saved Ollama result, see in {OUTPUT_MSG_FILE}")
-        time.sleep(50)
-
-
 if __name__ == "__main__":
     try:
-        # webcam_stream()
-        # webcam_thread = Thread(target=webcam_stream)
-        ollama_thread = Thread(target=ollama_requests)
-        # webcam_thread.start()
-        ollama_thread.start()
+        webcam_stream()
     except KeyboardInterrupt:
         sys.exit()
