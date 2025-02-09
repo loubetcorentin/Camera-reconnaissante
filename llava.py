@@ -52,7 +52,6 @@ def template(content, printer):
 if __name__ == "__main__":
     try:
         printer = Printer(SERIAL_PATH, debug=False)
-        printer.empty_buffer()
         printer.ser.image("./img/ami.jpg", center=True)
         with open(OUTPUT_MSG_FILE, "w") as out_file:
             for content in ollama_stream(LLAVA_PROMPT):
