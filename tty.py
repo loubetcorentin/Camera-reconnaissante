@@ -1,4 +1,5 @@
 import numpy as np
+from datetime import datetime
 import serial
 from PIL import Image
 
@@ -36,8 +37,12 @@ class Printer:
         self.ser.write(bytes([0x1D, 0x4C, left_margin, 0x00]))
         self.ser.write(bytes([0x1B, 0x42, blank_chars]))
 
+    def set_code_page(self, page=0):  # 0 is PC437 (default)
+        # ESC t command to select character code table
+        self.ser.write(bytes([0x1B, 0x74, page]))
+
     def write(self, text):
-        self.ser.write(f"{text}\n".encode())
+        self.ser.write(f"{text}\n".encode("cp437", errors="replace"))
 
     def print_bitmap(self, height, width, bitmap_data):
         """
@@ -48,6 +53,10 @@ class Printer:
         """
         self.ser.write(bytes([0x12, 0x2A, height, width]))  # DC2 * r n
         self.ser.write(bitmap_data)
+
+    def print_datetime(self):
+        current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        self.write(current_time.encode())
 
     def print_image(self, image_path):
         """

@@ -3,4 +3,4 @@ opencv-python
 numpy
 ollama
 pyserial
-dotenv
+doten
