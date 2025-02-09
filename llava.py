@@ -1,15 +1,17 @@
-import sys
-import ollama
-import time
-from tty import Printer
-from pathlib import Path
-from dotenv import load_dotenv
 import os
+import sys
+import time
+from pathlib import Path
+from tty import Printer
+
+import ollama
+from dotenv import load_dotenv
 
 load_dotenv()
 
 SCREENSHOT_CAM_FILE = Path(str(os.getenv("SCREENSHOT_CAM_FILE")))
-OUTPUT_MSG_FILE = Path("output_llava.txt")
+OUTPUT_MSG_FILE = Path(str(os.getenv("OUTPUT_MSG_FILE")))
+SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
 LLAVA_PROMPT = """
 Imagine you we are playing a game and we need you to play an evil persone trying to describe the person in the picture you are provided
 Look at the person whose face is in the green square, imagine a reason why you should arrest this person.
@@ -49,7 +51,7 @@ def template(content, printer):
 
 if __name__ == "__main__":
     try:
-        printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
+        printer = Printer(SERIAL_PATH, debug=False)
         printer.empty_buffer()
         printer.ser.image("./img/ami.jpg", center=True)
         with open(OUTPUT_MSG_FILE, "w") as out_file:
