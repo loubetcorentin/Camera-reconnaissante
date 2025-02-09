@@ -17,9 +17,12 @@ YOLO11N_FACE_FILE = YOLO_WEIGHTS_PATH / "yolov11n-face.pt"
 
 def webcam_stream():
     # start webcam
+
     cap = cv2.VideoCapture(0)
-    cap.set(3, 480)
-    cap.set(4, 480)
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # cap.set(3, 480)
+    # cap.set(4, 480)
 
     # model
     model = YOLO(YOLO11N_FACE_FILE)
@@ -36,7 +39,6 @@ def webcam_stream():
 
     while True:
         success, img = cap.read()
-        img = img[:, 80:560]
 
         results = model(img, stream=True)
 
@@ -70,7 +72,7 @@ def webcam_stream():
             cv2.imwrite(str(SCREENSHOT_CAM_FILE), img)
 
         if cv2.waitKey(1) == ord("q"):
-            bckg[border : 240 + border, border : 240 + border] = img
+            # bckg[border : 240 + border, border : 240 + border] = img
             cv2.imwrite(str(SCREENSHOT_CAM_FILE), img)
             break
 

@@ -18,6 +18,7 @@ Remember, you are an actor impersonating a cop.
 Talk like you wre describing the person to another cop over radio.
 Use military alphabet if needed.
 Do not print stage directions.
+Be concise
 """
 
 
@@ -25,7 +26,7 @@ def ollama_requests():
     printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
     printer.set_print_density(7, 255, 2)
     printer.set_margins(5, 5)
-    printer.set_size(Printer.DOUBLE_WIDTH)
+    # printer.set_size(Printer.DOUBLE_WIDTH)
     printer.set_code_page(0)
     while True:
         print("Start Ollama request")
