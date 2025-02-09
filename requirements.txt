@@ -3,4 +3,6 @@ opencv-python
 numpy
 ollama
 pyserial
-doten
+python-dotenv
+serial
+python-escpos

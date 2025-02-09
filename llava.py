@@ -21,46 +21,47 @@ Be concise
 """
 
 
-def ollama_requests():
-    printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
-    printer.set_print_density(7, 255, 2)
-    # printer.set_margins(0, 5)
-    # printer.set_size(Printer.DOUBLE_WIDTH)
-    printer.set_code_page(0)
-    while True:
-        print("Start Ollama request")
-        with open(SCREENSHOT_CAM_FILE, "rb") as file:
-            response = ollama.chat(
-                model="llava",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": LLAVA_PROMPT,
-                        "images": [file.read()],
-                    },
-                ],
-            )
+def ollama_requests(prompt):
+    try:
+        while True:
+            print("Start Ollama request")
+            with open(SCREENSHOT_CAM_FILE, "rb") as file:
+                response = ollama.chat(
+                    model="llava",
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": prompt,
+                            "images": [file.read()],
+                        },
+                    ],
+                )
 
-        content = response["message"]["content"]
-        # content = content.replace("\\n", "\n")
-        print(f"Received Ollama result : {content}")
-        printer.write("---SUSPECT---")
-        printer.write("--DETECTED--")
-        printer.print_datetime()
-        printer.write("\n")
-        printer.write(content)
-        printer.write("---CALLING---")
-        printer.write("---BACKUP---")
-        printer.write("\n" * 5)
+            content = response["message"]["content"]
+            print(f"Received Ollama result : {content}")
+            yield content
+            time.sleep(50)
+    except KeyboardInterrupt:
+        sys.exit()
 
-        with open(OUTPUT_MSG_FILE, "w") as out_file:
-            out_file.write(content)
-        print(f"Saved Ollama result, see in {OUTPUT_MSG_FILE}")
-        time.sleep(50)
+
+def template(content, printer):
+    printer.text(content)
+    time.sleep(0.5)
+    printer.ser.ln()
+    printer.qr("https://technopolice.fr/", size=4, native=True)
+    printer.ser.barcode("4006381333931", "EAN13", 64, 2, "", "")
 
 
 if __name__ == "__main__":
     try:
-        ollama_requests()
+        printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
+        for content in ollama_requests(LLAVA_PROMPT):
+            printer.empty_buffer()
+            printer.ser.image("./img/ami.jpg", center=True)
+            template(content, printer)
+            with open(OUTPUT_MSG_FILE, "w") as out_file:
+                out_file.write(content)
+            print(f"Saved Ollama result, see in {OUTPUT_MSG_FILE}")
     except KeyboardInterrupt:
         sys.exit()
