@@ -14,8 +14,7 @@ LLAVA_PROMPT = """
 Imagine you we are playing a game and we need you to play an evil persone trying to describe the person in the picture you are provided
 Look at the person whose face is in the green square, imagine a reason why you should arrest this person.
 Fully impersonate your persona from the begining of you answer
-Remember, you are an actor impersonating a cop.
-Talk like you wre describing the person to another cop over radio.
+Write like you where writing your deposition of a case 
 Use military alphabet if needed.
 Do not print stage directions.
 Be concise
@@ -25,7 +24,7 @@ Be concise
 def ollama_requests():
     printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
     printer.set_print_density(7, 255, 2)
-    printer.set_margins(5, 5)
+    # printer.set_margins(0, 5)
     # printer.set_size(Printer.DOUBLE_WIDTH)
     printer.set_code_page(0)
     while True:

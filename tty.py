@@ -22,6 +22,9 @@ class Printer:
     TRIPLE_WIDTH = 0x20
     QUADRUPLE_WIDTH = 0x30
 
+    def set_size(self, size):
+        self.ser.write(bytes([0x1D, 0x21, size]))
+
     def set_print_density(self, dots=7, heating_time=80, heating_interval=2):
         """
         dots: Max printing dots (0-7), default high density of 7 (64 dots)
@@ -30,21 +33,17 @@ class Printer:
         """
         self.ser.write(bytes([0x1B, 0x37, dots, heating_time, heating_interval]))
 
-    def set_size(self, size):
-        self.ser.write(bytes([0x1D, 0x21, size]))
-
     def set_margins(self, left_margin=4, blank_chars=4):
         self.ser.write(bytes([0x1D, 0x4C, left_margin, 0x00]))
         self.ser.write(bytes([0x1B, 0x42, blank_chars]))
 
     def set_code_page(self, page=0):  # 0 is PC437 (default)
-        # ESC t command to select character code table
         self.ser.write(bytes([0x1B, 0x74, page]))
 
     def write(self, text):
         self.ser.write(f"{text}\n".encode("cp437", errors="replace"))
 
-    def print_bitmap(self, height, width, bitmap_data):
+    def write_bitmap(self, height, width, bitmap_data):
         """
         Print a bitmap using DC2 * command
         height: height of bitmap
@@ -54,11 +53,11 @@ class Printer:
         self.ser.write(bytes([0x12, 0x2A, height, width]))  # DC2 * r n
         self.ser.write(bitmap_data)
 
-    def print_datetime(self):
+    def write_datetime(self):
         current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         self.write(current_time.encode())
 
-    def print_image(self, image_path):
+    def write_image(self, image_path):
         """
         Print an image file
         image_path: path to image file
@@ -79,14 +78,7 @@ class Printer:
                         byte |= 1 << (7 - bit)
                 bitmap.append(byte)
 
-        self.print_bitmap(height, width, bytes(bitmap))
+        self.write_bitmap(height, width, bytes(bitmap))
 
     def close(self):
         self.ser.close()
-
-
-# printer = Printer("/dev/tty.usbmodemflip_Rodiki1")
-# printer.set_print_density(7, 255, 2)
-#
-# printer.print("Test print")
-# printer.close()
