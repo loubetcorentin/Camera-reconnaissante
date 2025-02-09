@@ -39,3 +39,23 @@ Une fois ollama installé, télécharger llava :
 ollama pull llava
 ```
 
+## Start the projet
+
+Pour lancer le projet, lancer deux process :
+
+```bash
+python yolo2.py # Starts facial capture
+```
+
+```bash
+python llama.py # Starts llama model for insults
+```
+
+#### Printer debug
+
+I added a `studio.py` file to test the features of our printer.
+You can start it with
+
+```bash
+python studio.py
+```
