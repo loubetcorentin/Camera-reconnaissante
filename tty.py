@@ -34,9 +34,10 @@ class Printer:
 
     def set_styles(self):
         # self.set_double_strike()
-        self.set_print_density(7, 255, 2)
+        print("Sets styles")
+        self.set_print_density(7, 255, 1)
         self.set_margins(0, 0)
-        self.set_size(Printer.NORMAL_SIZE)
+        self.set_size(Printer.DOUBLE_HEIGHT)
         self.set_code_page(0)
 
     def set_size(self, size):

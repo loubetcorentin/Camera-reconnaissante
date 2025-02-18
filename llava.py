@@ -53,9 +53,13 @@ if __name__ == "__main__":
     try:
         printer = Printer(SERIAL_PATH, debug=False)
         printer.ser.image("./img/ami.jpg", center=True)
+        # printer.write_datetime()
         with open(OUTPUT_MSG_FILE, "w") as out_file:
             for content in ollama_stream(LLAVA_PROMPT):
-                printer.text(content)
+                if content == "\n":
+                    printer.write_divider()
+                else:
+                    printer.text(content)
                 out_file.write(content)
                 time.sleep(0.1)
         printer.ser.ln()
