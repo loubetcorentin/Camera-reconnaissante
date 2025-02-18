@@ -1,0 +1,8 @@
+.venv/*
+yolo-Weights/*
+img/*
+out/*
+__pycache__
+output_llava.txt
+.env
+
