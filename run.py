@@ -23,7 +23,7 @@ def consume(prompt, frame):
 if __name__ == "__main__":
     try:
         for frame in webcam_stream():
-            if cv2.waitKey(1) == ord("a"):
+            if cv2.waitKey(1) == ord(" "):
                 thread = threading.Thread(
                     target=consume, args=(LLAVA_PROMPT, encode_image(frame))
                 )
