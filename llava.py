@@ -15,23 +15,24 @@ SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
 LLAVA_PROMPT = Path("prompts", "prompt.txt").read_text()
 
 
-def ollama_stream(prompt):
+def ollama_stream(prompt, file):
     try:
-        print("Start Ollama request")
-        with open(SCREENSHOT_CAM_FILE, "rb") as file:
+        with open(OUTPUT_MSG_FILE, "w") as out_file:
+            print("Start Ollama request")
             for part in ollama.chat(
                 model="llava",
                 messages=[
                     {
                         "role": "user",
                         "content": prompt,
-                        "images": [file.read()],
+                        "images": [file],
                     },
                 ],
                 stream=True,
             ):
                 yield part["message"]["content"]
                 print(part["message"]["content"], end="", flush=True)
+                out_file.write(part["message"]["content"])
         print("Ollama stoped generating request")
     except KeyboardInterrupt:
         sys.exit()
@@ -46,10 +47,9 @@ if __name__ == "__main__":
         printer = Printer(SERIAL_PATH, debug=True)
         printer.ser.image("./img/ami.jpg", center=True)
         printer.write_datetime()
-        with open(OUTPUT_MSG_FILE, "w") as out_file:
-            for content in ollama_stream(LLAVA_PROMPT):
+        with open(SCREENSHOT_CAM_FILE, "rb") as file:
+            for content in ollama_stream(LLAVA_PROMPT, file.read()):
                 printer.text(content)
-                out_file.write(content)
                 time.sleep(0.1)
         printer.ser.ln()
         printer.qr("https://technopolice.fr/", size=4)
