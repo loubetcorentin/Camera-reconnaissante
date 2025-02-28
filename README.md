@@ -48,7 +48,7 @@ python yolo2.py # Starts facial capture
 ```
 
 ```bash
-python llama.py # Starts llama model for insults
+python llava.py # Starts llava model for insults
 ```
 
 #### Printer debug
