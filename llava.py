@@ -40,11 +40,12 @@ def ollama_stream(prompt):
 def template(content, printer):
     printer.text(content)
 
-
 if __name__ == "__main__":
     try:
         printer = Printer(SERIAL_PATH, debug=True)
-        printer.ser.image("./img/ami.jpg", center=True)
+        ami_img = Path('./img/ami.jpg')
+        if ami_img.exists():
+            printer.ser.image(ami_img, center=True)
         printer.write_datetime()
         with open(OUTPUT_MSG_FILE, "w") as out_file:
             for content in ollama_stream(LLAVA_PROMPT):
