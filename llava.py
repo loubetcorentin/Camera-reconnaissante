@@ -2,7 +2,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from tty import Printer
+from tty_printer import Printer
 
 import ollama
 from dotenv import load_dotenv
