@@ -41,7 +41,16 @@ ollama pull llava
 
 ## Start the projet
 
-Pour lancer le projet, lancer deux process :
+Pour lancer le projet, lancer la commande suivante :
+
+```bash
+python run.py
+```
+
+Si tout se passe bien, ca devrais afficher la webcam sur l'ecran.
+Pour lancer l'execution d'un prompt, il suffit d'appuyer sur espace.
+C'est pas ultra pratique parceque le terminal est remplis d'infos de la camera.
+Du coup pour une utilisation repete c'est plus simple de lancer une catpure d'un cote pour prendre une photo et de lancer des executions du prompt apres.
 
 ```bash
 python yolo2.py # Starts facial capture

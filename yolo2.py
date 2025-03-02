@@ -65,6 +65,7 @@ def webcam_stream():
                     )
                     # cv2.putText(img, f"attractiveness:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-0], font, fontScale, color, thickness)
 
+        yield img
         cv2.imshow("Webcam", img)
 
         if time.time() - ref_time > 1:
@@ -82,6 +83,6 @@ def webcam_stream():
 
 if __name__ == "__main__":
     try:
-        webcam_stream()
+        list(webcam_stream())
     except KeyboardInterrupt:
         sys.exit()
