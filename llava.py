@@ -2,7 +2,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from tty import Printer
+from tty_printer import Printer
 
 import ollama
 from dotenv import load_dotenv
@@ -41,11 +41,12 @@ def ollama_stream(prompt, file):
 def template(content, printer):
     printer.text(content)
 
-
 if __name__ == "__main__":
     try:
         printer = Printer(SERIAL_PATH, debug=True)
-        printer.ser.image("./img/ami.jpg", center=True)
+        ami_img = Path('./img/ami.jpg')
+        if ami_img.exists():
+            printer.ser.image(ami_img, center=True)
         printer.write_datetime()
         with open(SCREENSHOT_CAM_FILE, "rb") as file:
             for content in ollama_stream(LLAVA_PROMPT, file.read()):
