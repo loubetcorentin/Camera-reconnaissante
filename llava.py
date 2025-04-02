@@ -12,7 +12,7 @@ load_dotenv()
 SCREENSHOT_CAM_FILE = Path(str(os.getenv("SCREENSHOT_CAM_FILE")))
 OUTPUT_MSG_FILE = Path(str(os.getenv("OUTPUT_MSG_FILE")))
 SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
-LLAVA_PROMPT = Path("prompts", "prompt.txt").read_text()
+LLAVA_PROMPT = Path("prompts", "prompt_detailed.txt").read_text()
 
 # Choose type of printer
 # printer = EscPosPrettyPrinter(SERIAL_PATH, debug=True)
