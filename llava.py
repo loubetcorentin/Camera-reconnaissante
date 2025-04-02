@@ -2,7 +2,7 @@ import os
 import sys
 import time
 from pathlib import Path
-from tty_printer import Printer
+from tty_printer import EscPosPrettyPrinter, SimplePrinter
 
 import ollama
 from dotenv import load_dotenv
@@ -13,6 +13,10 @@ SCREENSHOT_CAM_FILE = Path(str(os.getenv("SCREENSHOT_CAM_FILE")))
 OUTPUT_MSG_FILE = Path(str(os.getenv("OUTPUT_MSG_FILE")))
 SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
 LLAVA_PROMPT = Path("prompts", "prompt.txt").read_text()
+
+# Choose type of printer
+# printer = EscPosPrettyPrinter(SERIAL_PATH, debug=True)
+printer = SimplePrinter(SERIAL_PATH, debug=False)
 
 
 def ollama_stream(prompt, file):
@@ -43,17 +47,11 @@ def template(content, printer):
 
 if __name__ == "__main__":
     try:
-        printer = Printer(SERIAL_PATH, debug=True)
-        ami_img = Path('./img/ami.jpg')
-        if ami_img.exists():
-            printer.ser.image(ami_img, center=True)
-        printer.write_datetime()
+        printer.write_start()
         with open(SCREENSHOT_CAM_FILE, "rb") as file:
             for content in ollama_stream(LLAVA_PROMPT, file.read()):
-                printer.text(content)
+                printer.write_text(content)
                 time.sleep(0.1)
-        printer.ser.ln()
-        printer.qr("https://technopolice.fr/", size=4)
-        printer.ser.barcode("4006381333931", "EAN13", 64, 2, "", "")
+        printer.wite_end()
     except KeyboardInterrupt:
         sys.exit()

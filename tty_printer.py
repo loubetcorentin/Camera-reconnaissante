@@ -1,8 +1,39 @@
 from escpos import printer, capabilities
 from datetime import datetime
+from pathlib import Path
+import serial
 
 
 class Printer:
+    def __init__(self, devfile, baudrate=19200, debug=False) -> None:
+        pass
+
+    def write_start(self):
+        pass
+
+    def write_text(self, text):
+        pass
+
+    def wite_end(self):
+        pass
+
+class SimplePrinter(Printer):
+    def __init__(self, devfile, baudrate=19200, debug=False) -> None:
+        if debug:
+            self.ser = printer.Dummy()
+        else:
+            self.ser = serial.Serial(devfile, baudrate=baudrate)
+
+    def write_start(self):
+        pass
+
+    def write_text(self, text: str):
+        self.ser.write(text.encode('utf-8'))
+
+    def wite_end(self):
+        self.ser.write(b"\n")
+
+class EscPosPrettyPrinter(Printer):
     # Size constants
     NORMAL_SIZE = 0x00
     DOUBLE_WIDTH = 0x10
@@ -29,15 +60,30 @@ class Printer:
                 # profile="ZJ-5870",
             )
         else:
+            print("Using dummy printer")
             self.ser = printer.Dummy()
         self.empty_buffer()
+
+    def write_start(self):
+        ami_img = Path('./img/ami.jpg')
+        if ami_img.exists():
+            self.ser.image(ami_img, center=True)
+        self.write_datetime()
+
+    def write_text(self, text):
+        self.text(text)
+
+    def wite_end(self):
+        self.ser.ln()
+        self.qr("https://technopolice.fr/", size=4)
+        self.ser.barcode("4006381333931", "EAN13", 64, 2, "", "")
 
     def set_styles(self):
         # self.set_double_strike()
         print("Sets styles")
         self.set_print_density(7, 255, 1)
         self.set_margins(0, 0)
-        self.set_size(Printer.DOUBLE_HEIGHT)
+        self.set_size(EscPosPrettyPrinter.DOUBLE_HEIGHT)
         self.set_code_page(0)
 
     def set_size(self, size):
