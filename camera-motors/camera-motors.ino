@@ -10,6 +10,8 @@ const char* ssid = "Mi 9 Lite";
 const char* password = "corentin01";
 const char* mqttServer = "192.168.43.83";
 const int mqttPort = 1883;
+const int connection_timeout = 10;
+bool wifi_setup_sucess = false;
 
 int Val1, Val2, Val3, Val4; // Valeurs pour les quatres moteurs
 
@@ -17,6 +19,10 @@ int Val1, Val2, Val3, Val4; // Valeurs pour les quatres moteurs
 #define PIN_SG90_2 9  // Broche de sortie pour le moteur 2
 #define PIN_SG90_3 8 // Broche de sortie pour le moteur 3
 #define PIN_SG90_4 7  // Broche de sortie pour le moteur 4
+
+#define PIN_PRINTER_RX 4
+#define PIN_PRINTER_TX 5 // en vrai ce sera sur le PIN 3 me demandez pas pk
+#define PIN_PRINTER_GND 6
 
 Servo servo1; // Objet Servo pour le moteur 1
 Servo servo2; // Objet Servo pour le moteur 2
@@ -26,22 +32,34 @@ Servo servo4; // Objet Servo pour le moteur 4
 WiFiClient espClient;
 PubSubClient client(espClient);
 
+HardwareSerial hardwareSerial(0);
+
 //----------------------------------
 //     WIFI CONNECT / RECONNECT
-void setup_wifi() {
+bool setup_wifi() {
   delay(10);
   // Connexion au réseau WiFi
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  int connection_time = 0;
+  while (WiFi.status() != WL_CONNECTED && connection_time <= connection_timeout * 2) {
     delay(500);
     Serial.print(".");
+    connection_time++;
   }
-  Serial.println("");
-  Serial.print("WiFi connected - ESP IP address: ");
-  Serial.println(WiFi.localIP());
+
+  if (connection_time > connection_timeout * 2) {
+    Serial.println("");
+    Serial.println("WiFi connection timed out");
+    return false;
+  } else {
+    Serial.println("");
+    Serial.print("WiFi connected - ESP IP address: ");
+    Serial.println(WiFi.localIP());
+    return true;
+  }
 }
 
 void reconnect() {
@@ -95,10 +113,17 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
-void setup() {
-  Serial.begin(115200);
+void setupPrinter() {
+  // Initialize UART to the printer
+  hardwareSerial.begin(19200, SERIAL_8N1, PIN_PRINTER_RX, PIN_PRINTER_TX);
+}
 
-  setup_wifi();
+void setup() {
+  Serial.begin(19200);
+
+  wifi_setup_sucess = setup_wifi();
+  delay(2000);
+  setupPrinter();
 
   client.setServer(mqttServer, mqttPort);
   client.setCallback(callback);
@@ -116,8 +141,15 @@ void setup() {
 }
 
 void loop() {
-  if (!client.connected()) {
-    reconnect();
+  if (wifi_setup_sucess) {
+    if (!client.connected()) {
+      reconnect();
+    }
+    client.loop();
   }
-  client.loop();
+  
+  if (Serial.available()) {
+    byte incomingByte = Serial.read();
+    hardwareSerial.write(incomingByte);
+  }
 }
