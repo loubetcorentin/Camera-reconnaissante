@@ -15,7 +15,7 @@ YOLO_WEIGHTS_PATH = Path("yolo-Weights")
 YOLO11N_FACE_FILE = YOLO_WEIGHTS_PATH / "yolov11n-face.pt"
 
 
-def webcam_stream():
+def webcam_stream(save_img = True):
     # start webcam
 
     cap = cv2.VideoCapture(0)
@@ -66,11 +66,13 @@ def webcam_stream():
                     # cv2.putText(img, f"attractiveness:{randrange(20,30)*box.conf[0]:.2f}%", [x1+5, y1-0], font, fontScale, color, thickness)
 
         yield img
+        time.sleep(0.1)
         cv2.imshow("Webcam", img)
 
         if time.time() - ref_time > 1:
             ref_time = time.time()
-            cv2.imwrite(str(SCREENSHOT_CAM_FILE), img)
+            if save_img :
+                cv2.imwrite(str(SCREENSHOT_CAM_FILE), img)
 
         if cv2.waitKey(1) == ord("q"):
             # bckg[border : 240 + border, border : 240 + border] = img

@@ -5,8 +5,17 @@ import sys
 import cv2
 import base64
 from pathlib import Path
+from tty_printer import EscPosPrettyPrinter, SimplePrinter
 
-LLAVA_PROMPT = Path("prompts", "prompt.txt").read_text()
+import os
+import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+LLAVA_PROMPT = Path("prompts", "prompt_detailed.txt").read_text()
+SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
+printer = SimplePrinter(SERIAL_PATH, debug=False)
 
 
 def encode_image(frame):
@@ -16,8 +25,11 @@ def encode_image(frame):
 
 
 def consume(prompt, frame):
+    printer.write_start()
     for part in ollama_stream(prompt=prompt, file=frame):
-        print(part, end="", flush=True)
+        printer.write_text(part)
+        time.sleep(0.05)
+    printer.wite_end()
 
 
 if __name__ == "__main__":
