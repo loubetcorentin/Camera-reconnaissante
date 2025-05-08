@@ -11,7 +11,8 @@ load_dotenv()
 
 SCREENSHOT_CAM_FILE = Path(str(os.getenv("SCREENSHOT_CAM_FILE")))
 OUTPUT_MSG_FILE = Path(str(os.getenv("OUTPUT_MSG_FILE")))
-SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
+SERIAL_PATH = "COM25"
+#str(os.getenv("SERIAL_PATH"))
 LLAVA_PROMPT = Path("prompts", "prompt_detailed.txt").read_text()
 
 # Choose type of printer
@@ -30,9 +31,11 @@ def ollama_stream(prompt, file):
                         "role": "user",
                         "content": prompt,
                         "images": [file],
+
                     },
                 ],
                 stream=True,
+                keep_alive=-1
             ):
                 yield part["message"]["content"]
                 print(part["message"]["content"], end="", flush=True)
@@ -51,7 +54,8 @@ if __name__ == "__main__":
         with open(SCREENSHOT_CAM_FILE, "rb") as file:
             for content in ollama_stream(LLAVA_PROMPT, file.read()):
                 printer.write_text(content)
-                time.sleep(0.1)
+                time.sleep(0.3)
+        
         printer.wite_end()
     except KeyboardInterrupt:
         sys.exit()
