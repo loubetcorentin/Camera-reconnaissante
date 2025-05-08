@@ -14,7 +14,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 LLAVA_PROMPT = Path("prompts", "prompt_detailed.txt").read_text()
-SERIAL_PATH = str(os.getenv("SERIAL_PATH"))
+SERIAL_PATH = "COM25"
+#str(os.getenv("SERIAL_PATH"))
 printer = SimplePrinter(SERIAL_PATH, debug=False)
 
 

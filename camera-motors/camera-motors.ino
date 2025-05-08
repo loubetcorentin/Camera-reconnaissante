@@ -13,12 +13,16 @@ const int mqttPort = 1883;
 const int connection_timeout = 10;
 bool wifi_setup_sucess = false;
 
-int Val1, Val2, Val3, Val4; // Valeurs pour les quatres moteurs
+int Val1, Val2; //Val3, Val4; //Valeurs pour les quatres moteurs
 
 #define PIN_SG90_1 10 // Broche de sortie pour le moteur 1
 #define PIN_SG90_2 9  // Broche de sortie pour le moteur 2
-#define PIN_SG90_3 8 // Broche de sortie pour le moteur 3
-#define PIN_SG90_4 7  // Broche de sortie pour le moteur 4
+//#define PIN_SG90_3 8 // Broche de sortie pour le moteur 3
+//#define PIN_SG90_4 7  // Broche de sortie pour le moteur 4
+#define A1 8  // Broche de sortie pour le moteur 3 sens horaire
+#define A2 7  // Broche de sortie pour le moteur 3 sens antihoraire
+#define B1 20  // Broche de sortie pour le moteur 3 sens horaire
+#define B2 3  // Broche de sortie pour le moteur 3 sens antihoraire
 
 #define PIN_PRINTER_RX 4
 #define PIN_PRINTER_TX 5 // en vrai ce sera sur le PIN 3 me demandez pas pk
@@ -26,8 +30,8 @@ int Val1, Val2, Val3, Val4; // Valeurs pour les quatres moteurs
 
 Servo servo1; // Objet Servo pour le moteur 1
 Servo servo2; // Objet Servo pour le moteur 2
-Servo servo3; // Objet Servo pour le moteur 3
-Servo servo4; // Objet Servo pour le moteur 4
+//Servo servo3; // Objet Servo pour le moteur 3
+//Servo servo4; // Objet Servo pour le moteur 4
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -105,12 +109,51 @@ void callback(char* topic, byte* payload, unsigned int length) {
     servo2.write(val); // Commande le moteur 2
     Val2 = val;        // Mémoriser la valeur reçue pour le moteur 2
   } else if (String(topic) == "motor3") {
+    // Action à effectuer lorsque le sujet MQTT est "motor1"
+    switch (val) {
+        case 1:
+            // Stop
+            digitalWrite(A2, LOW);
+            digitalWrite(A1, LOW);
+            break;
+        case 2:
+            // Tourne dans l'autre sens
+            digitalWrite(A2, LOW);
+            digitalWrite(A1, HIGH);
+            break;
+        case 0:
+            // Tourne dans un sens
+            digitalWrite(A2, HIGH);
+            digitalWrite(A1, LOW);
+            break;
+    }
+  } else if (String(topic) == "motor4") {
+    // Action à effectuer lorsque le sujet MQTT est "motor1"
+    switch (val) {
+        case 1:
+            // Stop
+            digitalWrite(B2, LOW);
+            digitalWrite(B1, LOW);
+            break;
+        case 2:
+            // Tourne dans l'autre sens
+            digitalWrite(B2, LOW);
+            digitalWrite(B1, HIGH);
+            break;
+        case 0:
+            // Tourne dans un sens
+            digitalWrite(B2, HIGH);
+            digitalWrite(B1, LOW);
+            break;
+    }
+  }
+  /*else if (String(topic) == "motor3") {
     servo3.write(val); // Commande le moteur 3
     Val3 = val;        // Mémoriser la valeur reçue pour le moteur 3
   } else if (String(topic) == "motor4") {
     servo4.write(val); // Commande le moteur 4
     Val4 = val;        // Mémoriser la valeur reçue pour le moteur 4
-  }
+  }*/
 }
 
 void setupPrinter() {
@@ -131,13 +174,19 @@ void setup() {
   // Initialisation des moteurs
   servo1.attach(PIN_SG90_1); // Attacher le moteur 1 à la broche 10
   servo2.attach(PIN_SG90_2); // Attacher le moteur 2 à la broche 9
-  servo3.attach(PIN_SG90_3); // Attacher le moteur 3 à la broche 8
-  servo4.attach(PIN_SG90_4); // Attacher le moteur 4 à la broche 7
+  //servo3.attach(PIN_SG90_3); // Attacher le moteur 3 à la broche 8
+  //servo4.attach(PIN_SG90_4); // Attacher le moteur 4 à la broche 7
 
   servo1.write(90); // Position initiale du moteur 1 à 90° (neutre)
   servo2.write(90); // Position initiale du moteur 2 à 90° (neutre)
-  servo3.write(90); // Position initiale du moteur 3 à 90° (neutre)
-  servo4.write(90); // Position initiale du moteur 4 à 90° (neutre)
+  //servo3.write(90); // Position initiale du moteur 3 à 90° (neutre)
+  //servo4.write(90); // Position initiale du moteur 4 à 90° (neutre)
+
+  pinMode(A1, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(B1, OUTPUT);
+  pinMode(B2, OUTPUT);
+
 }
 
 void loop() {

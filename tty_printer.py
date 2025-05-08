@@ -25,12 +25,21 @@ class SimplePrinter(Printer):
             self.ser = serial.Serial(devfile, baudrate=baudrate)
 
     def write_start(self):
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
         pass
 
     def write_text(self, text: str):
         self.ser.write(text.encode('utf-8'))
 
     def wite_end(self):
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
+        self.ser.write(b"\n")
         self.ser.write(b"\n")
 
 class EscPosPrettyPrinter(Printer):
