@@ -8,7 +8,7 @@
 //        MQTT CONTROLLER
 const char* ssid = "Mi 9 Lite";
 const char* password = "corentin01";
-const char* mqttServer = "192.168.43.83";
+const char* mqttServer = "172.20.10.2";
 const int mqttPort = 1883;
 const int connection_timeout = 10;
 bool wifi_setup_sucess = false;
