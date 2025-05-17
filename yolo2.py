@@ -79,6 +79,8 @@ def webcam_stream(save_img = True):
         port (str): Serial port to check availability before processing.
     """
     cap = cv2.VideoCapture(0)
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     if not cap.isOpened():
         print("Error: Unable to open the camera.")
         return
@@ -117,6 +119,7 @@ def webcam_stream(save_img = True):
 
             for box in boxes:
                 x1, y1, x2, y2 = box.xyxy[0]
+                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
 
                 # Check if face is detected
                 if (x2 - x1) * (y2 - y1) > 10000 and box.cls[0] == 0:
