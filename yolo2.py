@@ -19,7 +19,8 @@ load_dotenv()
 SCREENSHOT_CAM_FILE = os.getenv("SCREENSHOT_CAM_FILE")
 YOLO_WEIGHTS_PATH = Path("yolo-Weights")
 YOLO11N_FACE_FILE = YOLO_WEIGHTS_PATH / "yolov11n-face.pt"
-SERIAL_PATH = "COM25"
+# SERIAL_PATH = "COM25" #personal computer
+SERIAL_PATH = "COM3" #zotac
 DEBUG = True
 
 def trigger_llava():

@@ -2,7 +2,6 @@ ultralytics
 opencv-python
 numpy
 ollama
-pyserial
 python-dotenv
 serial
 python-escpos

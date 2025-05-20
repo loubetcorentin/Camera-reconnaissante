@@ -13,7 +13,8 @@ load_dotenv()
 
 SCREENSHOT_CAM_FILE = Path(str(os.getenv("SCREENSHOT_CAM_FILE")))
 OUTPUT_MSG_FILE = Path(str(os.getenv("OUTPUT_MSG_FILE")))
-SERIAL_PATH = "COM25"
+# SERIAL_PATH = "COM25" #personal computer
+SERIAL_PATH = "COM3" #zotac
 #str(os.getenv("SERIAL_PATH"))
 LLAVA_PROMPT = Path("prompts", "prompt_detailed.txt").read_text()
 
