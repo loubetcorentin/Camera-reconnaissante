@@ -44,7 +44,7 @@ def trigger_llava():
     try:
         print("🔥 Triggering LLaVA (Serge Llama) 🔥")
 
-        basepath = Path("C:/Users/coren/Documents/these/Camera-reconnaissante")
+        basepath = Path("C:/Users/zotac 13347/Camera-reconnaissante")
         python = basepath / ".venv" / "Scripts" / "python.exe"
         llava = basepath / "llava.py"
 
@@ -88,6 +88,7 @@ def webcam_stream(save_img = True):
 
     # model initialisation
     model = YOLO(YOLO11N_FACE_FILE)
+    model.to('cpu')
     model.verbose = False
 
     # Define text settings for bounding boxes
@@ -103,7 +104,7 @@ def webcam_stream(save_img = True):
     while True:
         if not available_port(SERIAL_PATH):
             print(f"Serial port {SERIAL_PATH} is not available. Waiting...")
-            sleep(2)
+            # sleep(2)
             continue
 
         success, img = cap.read()
@@ -139,7 +140,7 @@ def webcam_stream(save_img = True):
 
         yield img
 
-        time.sleep(0.1)
+        time.sleep(0.4)
 
         if found:
             # Save image if face is detected
