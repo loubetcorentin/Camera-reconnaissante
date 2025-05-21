@@ -102,10 +102,6 @@ def webcam_stream(save_img = True):
     ref_time = time.time()
 
     while True:
-        if not available_port(SERIAL_PATH):
-            print(f"Serial port {SERIAL_PATH} is not available. Waiting...")
-            # sleep(2)
-            continue
 
         success, img = cap.read()
         if not success:
@@ -143,6 +139,10 @@ def webcam_stream(save_img = True):
         time.sleep(0.4)
 
         if found:
+            if not available_port(SERIAL_PATH):
+                print(f"Serial port {SERIAL_PATH} is not available. Waiting...")
+                # sleep(2)
+                continue
             # Save image if face is detected
             if time.time() - ref_time > 1:
                 ref_time = time.time()
